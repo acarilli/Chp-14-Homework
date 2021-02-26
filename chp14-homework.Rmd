@@ -1,0 +1,328 @@
+---
+title: "Chapter 14 Homework"
+author: "Carilli"
+date: '`r format(lubridate::today(), "%B %d, %Y")`'
+output: 
+  html_document:
+    toc: false
+    toc_float: false
+    df_print: paged
+    theme: cerulean
+    highlight: tango
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = NA,
+                      options(digits = 3, scipen = 999))
+library(tidyverse)
+```
+
+# Homework {.tabset}
+
+## 1 {.tabset}
+
+### Algebraic Notation 
+
+Derivation of $\hat\beta_0$ and $\hat\beta_1$  
+
+
+\begin{align}
+
+y_i &= \beta_0 + \beta_1X_i + \epsilon_i \\
+
+\hat\epsilon_i &= y_i - \hat\beta_0-\hat\beta_1x_i \\
+
+\sum{\hat\epsilon_i^2}&= \sum (y_i - \hat\beta_0-\hat\beta_1x_i)^2 \\
+
+\frac{\partial\sum{\hat\epsilon_i^2}}{\partial\hat\beta_0}&= -2\sum(y_i - \hat\beta_0-\hat\beta_1x_i) \\
+
+\frac{\partial\sum{\hat\epsilon_i^2}}{\partial\hat\beta_1}&= -2x_i\sum(y_i - \hat\beta_0-\hat\beta_1x_i) \\
+
+\text{to minimize the sum of squared residuals set} \frac{\partial\sum{\hat\epsilon_i^2}}{\partial\hat\beta_0}&= 0 \\
+\text{and} \frac{\partial\sum{\hat\epsilon_i^2}}{\partial\hat\beta_1}&=0 \\ 
+
+\text{we have two equations and two unkowns} \hat\beta_0 \text{ and } \hat\beta_1 \\
+
+-2\sum(y_i - \hat\beta_0-\hat\beta_1x_i) &= 0 \\ 
+
+\sum(y_i - \hat\beta_0-\hat\beta_1x_i) &= 0 \\
+
+\sum y_i- n\hat\beta_0 - \hat\beta_1\sum x_i & = 0\\
+
+\hat\beta_0  &= \bar y_i-  \hat\beta_1\bar x_i\\
+
+-2x_i\sum(y_i - \hat\beta_0-\hat\beta_1x_i) &= 0 \\
+
+x_i\sum(y_i - \hat\beta_0-\hat\beta_1x_i) &= 0 \\
+
+\text{subsitute for } \hat\beta_0 \text{ and distribute } x_i\\
+
+\sum(x_iy_i - x_i(\bar y_i-  \hat\beta_1\bar x_i)- \hat\beta_1x_i) &= 0 \\
+
+\sum(x_1y_i - x_i\bar y_i +  \hat\beta_1 x_i \bar x_i- \hat\beta_1x_i^2) &= 0 \\
+
+\sum x_1y_i - \bar y_i \sum x_i +  \hat\beta_1 \bar x_i \sum x_i - \hat\beta_1 \sum x_i^2 &= 0 \\
+
+ \hat\beta_1 (\bar x_i \sum x_i -  \sum x_i^2) &= \bar y_i \sum x_i - \sum x_1y_i \\
+ 
+ \hat\beta_1 (\frac{\sum x_i}{n}\sum x_i -  \sum x_i^2) &= \frac{\sum y_i}{n} \sum x_i - \sum x_1y_i    \\
+ 
+ \text{multiply both sides by }-n \\
+ 
+ \hat\beta_1 \left(n \sum x_i^2 - \left[\sum x_i\right]^2 \right) &= n \sum x_1y_i - \sum y_i \sum x_i  \\
+ 
+ \\
+ 
+ \hat\beta_1 &= \frac{n \sum x_i^2 - \left(\sum x_i\right)^2}{n \sum x_1y_i - \sum y_i \sum x_i } \\
+ 
+ \\
+ 
+ &= \frac{\sum(x_i-\bar x)(y_i - \bar y)}{\sum(x_i - \bar x)^2}
+
+\end{align}
+
+
+### Matrix Notation
+
+Derivation of $\hat B$ where $y = XB + \epsilon$
+
+\begin{align}
+
+\hat\epsilon &= y - X\hat B \\
+
+\hat\epsilon^T\hat\epsilon &= (y-X\hat B)^T(y-X\hat B) \\
+
+&= y^Ty - \hat B^TX^Ty - y^TX\hat B - \hat B^TX^TX\hat B \\
+
+&= y^Ty -2\hat B^TX^Ty - \hat B^TX^TX\hat B\\
+
+\frac{\partial \hat\epsilon^T\hat\epsilon}{\partial \hat B} &= 2X^Ty - 2X^TX\hat B \\\\
+
+\text{set the derivative = 0 and solve for }\hat B \\\\
+
+2X^Ty -2X^TX\hat B &= 0 \\
+
+\hat BX^TX &= X^Ty \\
+
+(X^TX)^{-1}\hat B(X^TX) &= (X^TX)^{-1}X^Ty \\
+
+\hat B&= (X^TX)^{-1}X^Ty
+
+\end{align}
+
+
+
+
+
+## 2 {.tabset}
+
+The crucial assumption is that $E(x_i\epsilon_i)=0.$ That is there is no endogeneity.
+
+### Algebraic Notation {.tabset}
+
+#### $\hat\beta_1$
+
+For $\hat\beta_1$ to be an unbiased estimator of $\beta_1$ we must have $E(\hat\beta_1) = \beta_1$.
+
+\begin{align}
+
+E(\hat\beta_1) &=
+
+E \left[\frac{\sum(x_i-\bar x)(y_i - \bar y)}{\sum(x_i - \bar x)^2}\right] \\\\
+
+&=E \left[\frac{\sum(x_i-\bar x)(\beta_1x_i+\epsilon_i - \bar y)}{\sum(x_i - \bar x)^2}\right] \\\\
+
+&=\frac{1}{\sum(x_i - \bar x)^2} E\left[\sum(x_i-\bar x)(\beta_1x_i+\epsilon_i - \bar y)\right] \\\\
+
+&=\frac{1}{\sum(x_i - \bar x)^2} E\left[\sum(\beta_1x_i^2 - \beta_1x_i\bar x + x_i\epsilon_i - \bar x\epsilon_i - x_i\bar y + \bar x \bar y)\right] \\\\
+
+&=\frac{1}{\sum(x_i - \bar x)^2} E\left[\sum(\beta_1(x_i^2 - x_i\bar x) + x_i\epsilon_i - \bar x\epsilon_i - \bar y(x_i - \bar x)\right] \\\\
+
+&=\frac{1}{\sum(x_i - \bar x)^2} E\left[\beta_1\sum(x_i^2 - x_i\bar x) + \sum x_i\epsilon_i - \bar x\sum\epsilon_i - \bar y\sum(x_i - \bar x)\right] \\\\
+
+\text{using } \sum{(x_i-\bar x) = 0}  \\
+\text{and }\sum(x_i^2 - x_i\bar x) = \sum(x_i - \bar x)^2 \\
+\text{and } \sum\epsilon_i=0 \\
+\text{yields} \\
+
+&=\frac{1}{\sum(x_i - \bar x)^2} \left(\beta_1\sum(x_i - \bar x)^2 + \sum E(x_i\epsilon_i) \right) \\\\
+
+E(\hat\beta_1) &= \beta_1 + \frac{1}{\sum(x_i - \bar x)^2} \sum E(x_i\epsilon_i) \\\\
+
+\text{If } x_i \text{ and } \epsilon_i \text{ are not correlated, } E(x_i\epsilon_i) = 0, \\\\
+
+\text{we have } E(\hat\beta_1) &= \beta_1
+
+\end{align}
+
+
+#### $\hat\beta_0$
+
+For $\hat\beta_0$ to be an unbiased estimator of $\beta_0$ we must have $E(\hat\beta_0) = \beta_0$.
+
+
+\begin{align}
+\hat\beta_0  &= \bar y_i-  \hat\beta_1\bar x_i\\\\
+
+E(\hat\beta_0)  &= E(\bar y_i-  \hat\beta_1\bar x_i)\\\\
+
+&= \bar y_i-  \beta_1\bar x_i\\\\ 
+
+&= \frac{\sum y_i}{n} -  \beta_1\bar x_i\\\\ 
+
+&= \frac{\sum( \beta_0 + \beta_1x_i + \epsilon_i)}{n} -  \beta_1\bar x_i\\\\ 
+
+&= \frac{\sum\beta_0}{n} + \frac{\sum\beta_1x_i}{n} + \frac{\sum \epsilon_i}{n} -  \beta_1\bar x_i\\\\
+
+&= \frac{n\beta_0}{n} + \frac{\beta_1\sum x_i}{n} + \frac{\sum \epsilon_i}{n}-  \beta_1\bar x_i\\\\
+
+&= \beta_0 + \beta_1 \bar{x} - \beta_1\bar{x} + \frac{\sum \epsilon_i}{n} \\\\
+
+& =\beta_0
+
+\end{align}
+
+
+
+### Matrix Notation
+
+For $\hat B$ to be an unbiased estimator of B, $E(\hat B) = B$.
+
+
+\begin{align}
+\hat B &= (X^TX)^{-1}X^Ty \\\\
+E(\hat B) &= E\left[ (X^TX)^{-1}X^T (XB + \epsilon) \right]\\\\
+
+&= E\left[ (X^TX)^{-1}X^TXB +  (X^TX)^{-1}X^T \epsilon) \right]\\\\
+
+&= E\left[B +  (X^TX)^{-1}X^T \epsilon) \right]\\\\
+
+&= B + (X^TX)^{-1}E\left[X^T \epsilon \right]\\\\
+
+\text{If } X^T \text{ and } \epsilon \text{ are uncorrelated, then } E\left[X^T\epsilon\right] = 0,
+
+\text{then } \\\\
+
+&= B
+\end{align}
+
+
+
+## 3 {.tabset}
+
+The variance of $\hat\beta_1$, like any other variance is $E(\beta_1-\hat{\beta_1})^2$ or in matrix notation $E\left[(B-\hat{B})'(B-\hat{B})\right]$. It is necessary that the errors are homoscedastic and uncorrelated with each other.
+
+### Derivation of $Var(\hat{\beta_1})$ {.tabset}
+
+#### Algebraic Notation
+
+
+
+\begin{align}
+
+\hat{\beta_1} &= \frac{\sum(x_i-\bar x)(\beta_1x_i+\epsilon_i - \bar y)}{\sum(x_i - \bar x)^2}\\\\
+
+&= \frac{1}{\sum(x_i - \bar x)^2} \sum(\beta_1x_i^2 - \beta_1x_i\bar x + x_i\epsilon_i - \bar x\epsilon_i - x_i\bar y + \bar x \bar y)\\\\
+
+&= \frac{1}{\sum(x_i - \bar x)^2} \left[ \beta_1\sum{x_i^2} - \beta_1\bar{x}\sum{x_i} + \sum{x_i\epsilon_i} - \bar{x}\sum\epsilon_i - \bar{y}\sum{x_i} + n\bar{x} \bar{y}\right]\\\\
+
+&= \frac{1}{\sum(x_i - \bar x)^2} \left[ \beta_1\sum{x_i^2} - \beta_1\bar{x}\sum{x_i} + \sum{x_i\epsilon_i}  - \bar{y}\sum{x_i} + n\frac{\sum{x}}{n}\bar{y}\right]\\\\
+
+&= \frac{1}{\sum(x_i - \bar x)^2} \left[ \beta_1\sum{x_i^2} - \beta_1\bar{x}\sum{x_i} + \sum{x_i\epsilon_i} \right]\\\\
+
+&= \frac{1}{\sum(x_i - \bar x)^2} \left[ \beta_1\sum{x_i^2} - \beta_1\frac{\sum{x_i}}{n}\sum{x_i} + \sum{x_i\epsilon_i} \right]\\\\
+
+&= \frac{1}{\sum(x_i - \bar x)^2} \left[ \beta_1\left(\sum{x_i^2} - \frac{\left(\sum{x_i}\right)^2}{n}\right) + \sum{x_i\epsilon_i} \right]\\\\
+
+&= \beta_1 + \sum\frac{x_i\epsilon_i}{(x_i-\bar{x})^2} \\\\
+
+\mathrm{var}(\hat{\beta_1}) &= \mathrm{var}\left[\sum\frac{x_i\epsilon_i}{(x_i-\bar{x})^2} \right]\\\\
+
+&= \left[\frac{1}{\sum(x_i-\bar{x})^2}\right]^2 \mathrm{var}\left[\sum{x_i\epsilon_i}\right] \\\\
+
+&= \left[\frac{1}{\sum(x_i-\bar{x})^2}\right]^2 \sum{\mathrm{var}[x_i]} \mathrm{var}\left[\epsilon_i\right] \\\\
+
+&= \left[\frac{1}{\sum(x_i-\bar{x})^2}\right]^2 \sum{\frac{\sum{(x_i - \bar{x_i})^2}}{n}} \sigma^2 \\\\
+
+&= \frac{1}{\sum(x_i-\bar{x})^2}  \sigma^2 \\\\
+
+
+
+\end{align}
+
+
+#### Matrix Notation
+
+
+\begin{align}
+\hat{B} &= B + (X^TX)^{-1}X^T\epsilon\\
+
+\hat{B} - B & = (X^TX)^{-1}X^T\epsilon\\
+
+\mathrm{var-cov}(\hat{B}) &= E\left[(B - \hat B)(B-\hat B)^T \right]\\
+
+
+&= E\left[\left[(X^TX)^{-1}X^T\epsilon\right]\left[(X^TX)^{-1}X^T\epsilon\right]^T \right] \\
+
+&= E\left[(X^TX)^{-1}X^T\epsilon\epsilon^TX(X^TX)^{-1}\right] \\
+
+&= (X^TX)^{-1}X^TE\left[\epsilon\epsilon^T\right]X(X^TX)^{-1} \\
+
+&= (X^TX)^{-1}X^T\sigma^2X(X^TX)^{-1} \\
+
+&= \sigma^2(X^TX)^{-1}X^TX(X^TX)^{-1} \\
+
+&= \sigma^2(X^TX)^{-1}
+\end{align}
+
+## 4 {.tabset}
+
+```{r 14-4data, message=FALSE}
+mlb <-
+  here::here("data", "MLBattend.csv") %>% 
+  read_csv() %>% 
+  janitor::clean_names()
+```
+
+### a
+
+```{r 4a}
+mlb %>% 
+  lm(home_attend ~ runs_scored, .) %>% 
+  jtools::summ(digits = 4)
+```
+
+### b
+
+$\text{Pr(Type II error given }\beta_1=\beta_{1}^{True}\text{)} = \Phi \left(\text{Critical value} - \frac{\beta_{1}^{True}}{se(\hat{\beta_1})}  \right)$
+
+```{r 4b}
+se <- 
+mlb %>% 
+  lm(home_attend ~ runs_scored, .) %>% 
+  broom::tidy() %>% 
+  filter(term == "runs_scored") %>% 
+  pull(std.error)
+
+beta <- c(100, 400, 1000)
+crit_value <- qnorm(.05)
+
+pnorm(crit_value + beta / se)
+```
+
+### c
+
+```{r 4c}
+pnorm(crit_value + beta / 900)
+```
+
+### d
+
+```{r 4d}
+pnorm(crit_value + beta / 100)
+```
+
+### e
+
+A larger standard error decreased the probability of Type II error, while a smaller standard error lead to a higher probablity of Type II error.

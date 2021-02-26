@@ -1,0 +1,73 @@
+---
+title: "Exercise 4"
+author: "Carilli"
+date: '`r format(lubridate::today(), "%B %d, %Y")`'
+output: 
+  html_document:
+    theme: cerulean
+    highlight: tango
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = NA, warning = FALSE, message = FALSE,
+                      options(digits = 3, scipen = 999))
+library(tidyverse)
+# library(janitor)
+# library(jtools)
+# library(magrittr)
+# library(broom)
+# library(kableExtra)
+```
+
+```{r}
+mlb <- 
+  here::here("data", "MLBattend.csv") %>% 
+  read_csv() %>% 
+  janitor::clean_names()
+```
+
+### (a)
+
+```{r part_a}
+mlb %$% 
+  lm(home_attend ~ runs_scored) %>% 
+  jtools::summ(digits = 4)
+```
+
+
+### (b)
+
+$\text{Pr(Type II error given }\beta_1=\beta_{1}^{True}\text{)} = \Phi \left(\text{Critical value} - \frac{\beta_{1}^{True}}{se(\hat{\beta_1})}  \right)$
+
+```{r}
+se <- 
+mlb %$% 
+  lm(home_attend ~ runs_scored) %>% 
+  broom::tidy() %>% 
+  filter(term == "runs_scored") %>% 
+  pull(std.error)
+
+beta <- c(100, 400, 1000)
+crit_value <- qnorm(.05)
+
+pnorm(crit_value + beta / se)
+```
+
+
+### (c)
+
+```{r}
+se <- 900
+pnorm(crit_value + beta / se)
+```
+
+
+### (d)
+
+```{r}
+se <- 100
+pnorm(crit_value + beta / se)
+```
+
+### (e)

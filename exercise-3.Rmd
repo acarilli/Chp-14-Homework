@@ -1,0 +1,104 @@
+---
+title: "Chapter 14 Exercise 3"
+author: "Carilli"
+date: '`r format(lubridate::today(), "%B %d, %Y")`'
+output: 
+  html_document:
+    toc: false
+    toc_float: false
+    df_print: paged
+    theme: cerulean
+    highlight: tango
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = NA,
+                      options(digits = 3, scipen = 999))
+library(tidyverse)
+```
+
+# Exercise {.tabset}
+
+
+## 3 {.tabset}
+
+```{r data-4, message=FALSE}
+oly <- 
+  here::here("data", "olympics_HW.csv") %>% 
+  read_csv() %>% 
+  janitor::clean_names()
+```
+
+
+### a
+
+The model is $medals_i = \beta_0 + \beta_1 population_i + \epsilon_i$
+
+```{r 3a}
+oly %>% 
+  lm(medals ~ population, .) %>% 
+  jtools::summ()
+```
+
+### b
+
+Consider the model $medals_i = \beta_0 + \beta_1 population_i + \beta_2 gdp_i + \epsilon_i$ 
+
+```{r 3b}
+oly %>%
+  select(gdp, population) %>%
+  cor(use = "pairwise.complete.obs")
+```
+
+We would expect gdp to have positive effect on medals.  Since GDP is negatively correlated with population and we expect GDP and the number of medals to positively related (*i.e.*, we expect $\beta_2>0$), we expect $\hat\beta_1$ to be understated.  
+
+Correlation of X~1~ and X~2~|>0| Effect of omitted variable $\beta_2$ on Y~0~|<0
+----|:---:|:---:|:----:|
+\>0 |Overstate coefficient|No bias|Understate coefficient  
+0| No bias| No bias|No bias  
+<0|Understate coefficient|No Bias |Overstate coefficient
+
+Table: Table 14.1 Effect of Omitting X~2~ on Coefficient Estimate of X~1~
+
+### c
+
+```{r 3c}
+oly %>% 
+  lm(medals ~ population + gdp, .) %>% 
+  jtools::summ()
+```
+
+### d
+
+```{r 3d}
+oly %>%
+  select(host, population) %>%
+  cor(use = "pairwise.complete.obs")
+```
+
+### e
+
+```{r 3e}
+oly %>% 
+  lm(medals ~ population + host, .) %>% 
+  jtools::summ()
+```
+
+### f
+
+```{r 3f}
+oly %>% 
+  lm(medals ~ population + gdp + host + elevation + temp, .) %>% 
+  lm.beta::lm.beta()
+```
+
+### g
+
+```{r 3g}
+oly %>% 
+  mutate(noisy_gdp = gdp + rnorm(1)) %>% 
+  lm(medals ~ population + noisy_gdp + host + elevation + temp, .) %>% 
+  lm.beta::lm.beta()
+```
+

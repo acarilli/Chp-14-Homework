@@ -1,0 +1,96 @@
+---
+title: "Exercise 3"
+author: "Carilli"
+date: '`r format(lubridate::today(), "%B %d, %Y")`'
+output: 
+  html_document:
+    theme: cerulean
+    highlight: tango
+    df_print: paged
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, comment = NA, warning = FALSE, message = FALSE,
+                      options(digits = 3, scipen = 999))
+library(tidyverse)
+# library(janitor)
+# library(jtools)
+# library(magrittr)
+# library(broom)
+# library(kableExtra)
+```
+
+```{r}
+oly <- 
+  here::here("data", "olympics_HW.csv") %>% 
+  read_csv() %>% 
+  janitor::clean_names() %>%
+  drop_na() %>% 
+  mutate(year = as.integer(year))
+```
+
+### (a)
+
+```{r part_a}
+oly %$% 
+  lm(medals ~ population) %>% 
+  jtools::summ(digits = 4)
+```
+
+
+### (b)
+
+```{r}
+oly %$% 
+  lm(population ~ gdp) %>% 
+  jtools::summ(digits = 4)
+```
+
+
+### (c)
+
+```{r}
+oly %$% 
+  lm(medals ~ population + gdp) %>% 
+  jtools::summ(digits = 4)
+```
+
+
+### (d)
+
+```{r}
+oly %$% 
+  lm(population ~ host) %>% 
+  jtools::summ(digits = 4)
+```
+
+### (e)
+
+```{r}
+oly %$% 
+  lm(medals ~ population + host) %>% 
+  jtools::summ(digits = 4)
+```
+
+### (f)
+
+```{r}
+oly %$% 
+  lm(medals ~ population + gdp + host + temp + elevation) %>% 
+  jtools::summ(digits = 4)
+
+oly %$% 
+  lm(medals ~ population + gdp + host + temp + elevation) %>% 
+  jtools::summ(digits = 4, scale = TRUE, transform.response = TRUE)
+
+```
+
+### (g)
+
+```{r}
+oly %>% 
+  mutate(medals = medals + rnorm(length(medals))) %$% 
+  lm(medals ~ population + gdp + host + elevation) %>% 
+  jtools::summ(digits = 4, scale = TRUE, transform.response = TRUE)
+```
+
